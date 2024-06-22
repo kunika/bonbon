@@ -76,7 +76,7 @@ The build process involves pre-downloading the ImageBind model, which takes arou
 
 ### Build manually
 
-1. Pull Ubuntu 20.04 (Focal Fossa).
+1. Pull the latest Ubuntu 20.04 (Focal Fossa) image.
 
    ```bash
    # In Raspberry Pi's terminal window
@@ -122,14 +122,14 @@ The build process involves pre-downloading the ImageBind model, which takes arou
 
 5. Install ImageBind's problematic dependencies manually.
 
-   * [Mayavi](https://github.com/enthought/mayavi)
+   * [Mayavi](https://github.com/enthought/mayavi) (optional)
 
      ```bash
      # In the Docker container's shell
      # cwd: /
      
      # Install mayavi
-     apt install -y mayavi2
+     apt update && apt install -y mayavi2
      
      # Verify installation
      python3
@@ -144,7 +144,7 @@ The build process involves pre-downloading the ImageBind model, which takes arou
      >>> exit()
      ```
 
-   * [GEOS](https://libgeos.org/)
+   * [GEOS](https://libgeos.org/) (a requirement for cartopy, otherwise optional)
 
      ```bash
      # In the Docker container's shell
@@ -161,7 +161,7 @@ The build process involves pre-downloading the ImageBind model, which takes arou
      # cwd: /
      
      # Install the required packages
-     apt install -y ffmpeg libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev
+     apt update && apt install -y ffmpeg libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev
      
      # Check ffmpeg version, make sure it is version 4.2 or later
      ffmpeg -version

@@ -25,7 +25,7 @@
    * **Operating System**: Raspberry Pi OS (Bookworm, 64-bit)
    * **Hostname**:  `bonbon`
    * **Username**: `pi`
-   * **Password**: `let***n!***`
+   * **Password**: `let***n!**`
 
 2. Configure the Raspberry Pi to boot from the NVMe SSD.
 
@@ -131,20 +131,25 @@ Source: https://docs.docker.com/engine/install/debian/
 
 Docker persists build cache, containers, images, and volumes to disk, and over time, these artifacts can build up and take up a lot of space on a system.
 
-| Task                                                         | Command                                                    |
-| ------------------------------------------------------------ | ---------------------------------------------------------- |
-| View disk usage.                                             | `docker system df`                                         |
-| List unused containers.                                      | `docker ps --filter status=exited --filter status=dead -q` |
-| Remove all stopped containers.                               | `docker container prune`                                   |
-| Remove dangling images.                                      | `docker image prune`                                       |
-| Remove anonymous volumes.                                    | `docker volume prune`                                      |
-| Remove build cache.                                          | `docker buildx prune`                                      |
-| Remove unused networks.                                      | `docker network prune`                                     |
-| Remove all unused containers, networks, images (dangling) and build cache (unused). | `docker system prune`                                      |
-| :warning: ​​Remove all dangling and unused images.             | `docker image prune -a`                                    |
-| :warning: ​Remove all anonymous and unused volumes.           | `docker volume prune -a`                                   |
-| :warning: ​Remove all unused containers, networks, and images (both dangling and unused), and build cache (unused). | `docker system prune -a`                                   |
-| :warning: ​Remove all unused containers, networks, images (both dangling and unused), volumes (anonymous and unused) and build cache (all). | `docker system prune -a --volumes`                         |
+| Task                                                         | Command                                               |
+| ------------------------------------------------------------ | ----------------------------------------------------- |
+| View disk usage.                                             | `docker system df`                                    |
+| List all running containers                                  | `docker container ls`                                 |
+| List all containers, both running and                        | `docker container ls -a`                              |
+| List unused containers.                                      | `docker container ls -f status=exited -f status=dead` |
+| List all images                                              | `docker image ls`                                     |
+| List all images including intermediate images                | `docker image ls -a`                                  |
+| List danging images                                          | `docker image ls -f dangling=true`                    |
+| Remove all stopped containers.                               | `docker container prune`                              |
+| Remove dangling images.                                      | `docker image prune`                                  |
+| Remove anonymous volumes.                                    | `docker volume prune`                                 |
+| Remove build cache.                                          | `docker buildx prune`                                 |
+| Remove unused networks.                                      | `docker network prune`                                |
+| Remove all unused containers, networks, images (dangling) and build cache (unused). | `docker system prune`                                 |
+| :warning: ​​Remove all dangling and unused images.             | `docker image prune -a`                               |
+| :warning: ​Remove all anonymous and unused volumes.           | `docker volume prune -a`                              |
+| :warning: ​Remove all unused containers, networks, and images (both dangling and unused), and build cache (unused). | `docker system prune -a`                              |
+| :warning: ​Remove all unused containers, networks, images (both dangling and unused), volumes (anonymous and unused) and build cache (all). | `docker system prune -a --volumes`                    |
 
 Use the  `-f` or `--force` option with `prune` to mute the prompts for confirmation e.g. `docker image prune -f`
 
@@ -372,6 +377,49 @@ Disabling, enabling and modifying Raspberry Pi's default swap on the boot microS
 
 <br />
 
+## GitHub SSH Access
+
+Source: 
+
+- [Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=linux)
+- [Adding a new SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?platform=linux)
+
+1. Generate a new GitHub SSH key.
+
+   ```bash
+   ssh-keygen -t ed25519 -C "your_email@example.com"
+   ```
+
+2. Add SSH key to the ssh-agent.
+
+   1. Start the ssh-agent in the background.
+
+      ```bash
+      eval "$(ssh-agent -s)"
+      ```
+
+   1. Add SSH private key to the ssh-agent.
+
+      ```bash
+      ssh-add ~/.ssh/id_github
+      ```
+
+3. Add the public key to GitHub.
+
+   ```bash
+   cat ~/.ssh/id_github.pub
+   # Then select and copy the contents of the id_github.pub file
+   # displayed in the terminal as a new SSH key at https://github.com/settings/keys
+   ```
+
+4. Authenticate and verify access.
+
+   ```bash
+   ssh -T git@github.com
+   ```
+
+<br />
+
 ## Pyenv
 
 Source: https://github.com/pyenv/pyenv
@@ -425,7 +473,27 @@ Source: https://github.com/pyenv/pyenv
 
 <br />
 
-## VSCodium
+## Visual Studio Code/VSCodium
+
+### Visual Studio Code (VS Code)
+
+Source: https://code.visualstudio.com/docs/setup/linux
+
+1. Download the .deb package from https://code.visualstudio.com/download.
+
+   ```bash
+   wget https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+   ```
+
+2. Install.
+
+   ```bash
+   sudo apt install code_1.90.2-1718751586_amd64.deb
+   ```
+
+   Installing the .deb package will automatically install the apt repository and signing key to enable auto-updating using the system's package manager.
+
+### VSCodium
 
 Source: https://vscodium.com/
 
@@ -453,7 +521,17 @@ Source: https://vscodium.com/
    sudo apt install codium
    ```
 
-### Use remote Python kernel in VSCodium/Visual Studio Code
+### Use Visual Studio Code/VSCodium without installing on Raspberry Pi
+
+This involves accessing files on Raspberry Pi from another/remote computer that is on the same network as your Raspberry Pi via Visual Studio Code/VSCodium and SSH.
+
+1. In Visual Studio Code/VSCodium on your remote computer, open the Command Palette, using Shift + Command + P (Mac) / Ctrl + Shift + P (Windows/Linux).
+2. Search for Remote-SSH: Connect to Host...
+3. Enter your username and hostname for your Raspberry Pi e.g. `pi@bonbon.local`.
+4. When prompted, enter your password for your user account on your Raspberry Pi.
+5. Select the directory to open.
+
+### Use remote Python kernel in Visual Studio Code/VSCodium
 
 Source: https://code.visualstudio.com/docs/datascience/jupyter-kernel-management#_existing-jupyter-server
 
@@ -503,4 +581,5 @@ Source: https://code.visualstudio.com/docs/datascience/jupyter-kernel-management
     '.dockerenv']
    ```
 
-   
+
+
